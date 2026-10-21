@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Riftbound Heist – CA Riftbound TCG Store Finder</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>body{font-family:system-ui,sans-serif;margin:0;background:#0f1220;color:#eee}header{padding:16px}h1{margin:0 0 6px;font-size:22px}
+#banner{display:none;background:#b00020;color:#fff;padding:10px 16px;font-weight:700;text-align:center}
+form{display:flex;gap:8px}input{padding:8px;font-size:16px;width:140px}button{padding:8px 14px;font-size:16px}
+#err{color:#ff8a80;margin-top:6px}main{display:flex;flex-wrap:wrap}#map{height:70vh;flex:1 1 500px}#list{flex:1 1 340px;max-height:70vh;overflow:auto;padding:8px}
+.card{background:#1b2035;border-radius:8px;padding:10px;margin:0 0 8px}.card h3{margin:0 0 4px;font-size:16px}.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:12px;background:#665c00}
+.tag.ok{background:#1b5e20}a{color:#8ab4f8}small{color:#aaa}footer{padding:12px 16px;color:#999;font-size:13px}</style></head><body>
+<div id="banner">⚠️ Sample data, not real stores</div>
+<header><h1>Riftbound Heist</h1><div>Find California game stores that likely carry Riftbound TCG (Riot Games).</div>
+<form id="f"><input id="zip" placeholder="CA ZIP code" maxlength="5" inputmode="numeric"><button>Search</button></form><div id="err"></div></header>
+<main><div id="map"></div><div id="list"><small>Enter a California ZIP to see nearby stores.</small></div></main>
+<footer>Stock is <b>unverified/likely</b> unless a dated source confirms it. Always call the store first. Not affiliated with Riot Games. <span id="upd"></span></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map=L.map('map').setView([36.7,-119.4],6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+let zips={},stores=[],layer=L.layerGroup().addTo(map);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mi=(a,b,c,d)=>{const r=x=>x*Math.PI/180,R=3958.8,dl=r(c-a),dn=r(d-b),h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+Promise.all([fetch('ca-zips.json').then(r=>r.json()),fetch('stores.json',{cache:'no-store'}).then(r=>r.json())]).then(([z,d])=>{zips=z;stores=Array.isArray(d)?d:(d.stores||[]);
+ if(d.sample||!stores.length)document.getElementById('banner').style.display='block';if(d.updated)document.getElementById('upd').textContent='Data updated '+d.updated+'.';});
+function stockTag(s){const confirmed=s.stockConfirmed&&s.lastSighting&&(s.lastSighting.date||'');
+ return confirmed?`<span class="tag ok">Confirmed in stock (source dated ${esc(s.lastSighting.date)})</span>`:`<span class="tag">Stock: unverified/likely</span>`}
+document.getElementById('f').onsubmit=e=>{e.preventDefault();const z=document.getElementById('zip').value.trim(),err=document.getElementById('err');err.textContent='';
+ if(!/^\d{5}$/.test(z)||+z<90000||+z>96199){err.textContent='Please enter a California ZIP (90000–96199).';return}
+ const c=zips[z];if(!c){err.textContent='ZIP not found in our California ZIP list.';return}
+ layer.clearLayers();L.circleMarker(c,{radius:7,color:'#f44'}).addTo(layer).bindPopup('ZIP '+z);
+ const list=stores.filter(s=>s.lat&&s.lng).map(s=>({...s,d:mi(c[0],c[1],s.lat,s.lng)})).sort((a,b)=>a.d-b.d);
+ const el=document.getElementById('list');el.innerHTML=list.length?'':'<small>No stores in the dataset yet.</small>';const pts=[c];
+ list.slice(0,25).forEach(s=>{pts.push([s.lat,s.lng]);
+  const ls=s.lastSighting?`${esc(s.lastSighting.date||'undated')}: ${esc(s.lastSighting.note||'')}`:'None recorded';
+  const ev=(s.events||[]).map(e=>`<li>${esc(e.date||'')} ${esc(e.name||e)}</li>`).join('')||'<li>None listed</li>';
+  const src=(s.sources||[]).map(x=>`<a href="${esc(x.url||x)}" target="_blank" rel="noopener">${esc(x.label||x.url||x)}</a>${x.date?' <small>('+esc(x.date)+')</small>':''}`).join('<br>')||'<small>No sources</small>';
+  const html=`<h3>${esc(s.name)}</h3><small>${esc(s.address)} · ${s.d.toFixed(1)} mi</small><br>${stockTag(s)} <span class="tag" style="background:#333">Confidence: ${esc(s.confidence||'low')}</span>
+  <div><b>Last sighting:</b> ${ls}</div><div><b>Events:</b><ul style="margin:2px 0">${ev}</ul></div><div><b>Sources:</b><br>${src}</div>`;
+  L.marker([s.lat,s.lng]).addTo(layer).bindPopup(html);const d=document.createElement('div');d.className='card';d.innerHTML=html;el.appendChild(d)});
+ map.fitBounds(L.latLngBounds(pts.slice(0,6)).pad(0.2));};
+</script></body></html>

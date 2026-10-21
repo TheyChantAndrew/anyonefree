@@ -1,0 +1,10 @@
+{
+  "sample": true,
+  "note": "SAMPLE DATA - fictional placeholder stores for layout testing. Not real stores.",
+  "updated": "2026-10-21",
+  "stores": [
+    {"name":"SAMPLE Store A (fictional)","address":"Sample address, Los Angeles area","lat":34.05,"lng":-118.25,"stock":"unverified/likely","stockConfirmed":false,"lastSighting":null,"events":[],"confidence":"low","sources":[]},
+    {"name":"SAMPLE Store B (fictional)","address":"Sample address, San Francisco area","lat":37.77,"lng":-122.42,"stock":"unverified/likely","stockConfirmed":false,"lastSighting":null,"events":[],"confidence":"low","sources":[]},
+    {"name":"SAMPLE Store C (fictional)","address":"Sample address, San Diego area","lat":32.72,"lng":-117.16,"stock":"unverified/likely","stockConfirmed":false,"lastSighting":null,"events":[],"confidence":"low","sources":[]}
+  ]
+}
