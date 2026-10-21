@@ -1,10 +1,498 @@
 {
-  "sample": true,
-  "note": "SAMPLE DATA - fictional placeholder stores for layout testing. Not real stores.",
-  "updated": "2026-10-21",
+  "generated": "2026-10-21",
+  "region": "California",
+  "news": [
+    {
+      "title": "Radiance previews Sep 25-Oct 9; Pre-Rifts Oct 16-22; release Oct 23, 2026 (EN/FR/ZH)",
+      "source_url": "https://playriftbound.com/en-us/news/announcements/the-radiance-overview/",
+      "date": "2026-09-25"
+    },
+    {
+      "title": "Preparing for the Radiance Pre-Rift: events start Oct 16",
+      "source_url": "https://playriftbound.com/en-us/news/announcements/preparing-for-the-radiance-pre-rift/",
+      "date": "2026-10-12"
+    },
+    {
+      "title": "Riot Merch Store drawing: one Radiance display per selected fan (NA/EU); sign-up Sep 25-30, selection from Oct 5, fulfillment from Oct 23",
+      "source_url": "https://playriftbound.com/en-us/news/announcements/radiance-merch-store-update/",
+      "date": "2026-09-17"
+    },
+    {
+      "title": "2027 roadmap: Legacy Pre-Rift Jan 22-28, launch Jan 29, 2027; Proving Grounds 2nd Ed Feb 19; The Reckoning Pre-Rift Apr 23-29, launch Apr 30; Showdown Laughing Dragon Sacramento Oct 23-24, 2026",
+      "source_url": "https://playriftbound.com/en-us/news/announcements/august-2026-roadmap/",
+      "date": "2026-08-03"
+    },
+    {
+      "title": "US MSRP: $4.99 pack, $120 display, $34.99 Vault Bundle/Showdown Decks; no Amazon/Target/Walmart Radiance listing as of Sep 24",
+      "source_url": "https://riftcompare.com/blog/where-to-buy-riftbound-radiance",
+      "date": "2026-09-24"
+    },
+    {
+      "title": "Riftbound pages seen at Target, Best Buy, Miniature Market; Walmart/GameStop unverified",
+      "source_url": "https://pullnomics.com/guides/where-to-buy-riftbound-packs",
+      "date": "2026-10-17"
+    },
+    {
+      "title": "TYPA tracker: ~21 online restocks/week across 7 retailers, most on Fridays (third-party, unconfirmed)",
+      "source_url": "https://www.typa.app/brands/riftbound",
+      "date": "2026-10-21"
+    },
+    {
+      "title": "Gen.G Riftbound Showdown, Magic Box Event Campus, 1933 S. Broadway, Los Angeles 90007, Nov 21-22; registration opens Oct 22 11 AM",
+      "source_url": "https://x.com/GenG_Riftbound/status/2110538434683310235",
+      "date": "2026-10-14"
+    }
+  ],
   "stores": [
-    {"name":"SAMPLE Store A (fictional)","address":"Sample address, Los Angeles area","lat":34.05,"lng":-118.25,"stock":"unverified/likely","stockConfirmed":false,"lastSighting":null,"events":[],"confidence":"low","sources":[]},
-    {"name":"SAMPLE Store B (fictional)","address":"Sample address, San Francisco area","lat":37.77,"lng":-122.42,"stock":"unverified/likely","stockConfirmed":false,"lastSighting":null,"events":[],"confidence":"low","sources":[]},
-    {"name":"SAMPLE Store C (fictional)","address":"Sample address, San Diego area","lat":32.72,"lng":-117.16,"stock":"unverified/likely","stockConfirmed":false,"lastSighting":null,"events":[],"confidence":"low","sources":[]}
+    {
+      "name": "Fire & Dice",
+      "address": "9036 Tampa Ave",
+      "city": "Northridge",
+      "state": "CA",
+      "zip": "91324",
+      "lat": null,
+      "lng": null,
+      "phone": "+18189144538",
+      "website": "https://linktr.ee/fadgames",
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "UVS locator: Physical and Online Retailer / Organized Play; Wednesday Nexus Nights in Oct 2026",
+          "source_url": "https://locator.riftbound.uvsgames.com/stores/6e1927c6-56bf-4fd9-92e1-fe5391981cda?view=calendar",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "mcollectibles",
+      "address": "3702 Del Sol Blvd suite d",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92154",
+      "lat": null,
+      "lng": null,
+      "phone": "(619) 675-1006",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "UVS locator: Physical and Online Retailer / Organized Play",
+          "source_url": "https://locator.riftbound.uvsgames.com/stores/c2d59198-fa04-40c4-bc84-0d98b5a1756a",
+          "date": "2026-10-21"
+        },
+        {
+          "summary": "CardMap lists as Riftbound shop",
+          "source_url": "https://cardmap.app/games/riftbound/california/san-diego",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Game Kastle Redwood City",
+      "address": "340 Walnut Street",
+      "city": "Redwood City",
+      "state": "CA",
+      "zip": "94063",
+      "lat": null,
+      "lng": null,
+      "phone": "+16503623008",
+      "website": "https://www.gamekastle.com/stores/redwoodcity/index.php",
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "UVS locator: Physical Retailer / Organized Play (no upcoming events listed)",
+          "source_url": "https://locator.riftbound.uvsgames.com/stores/677588f9-8516-4d0e-84ac-716820fcd1a4",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Gen.G Esports x ASU LA GAME School",
+      "address": "1111 S Broadway",
+      "city": "Los Angeles",
+      "state": "CA",
+      "zip": "90015",
+      "lat": null,
+      "lng": null,
+      "phone": "(435) 659-0929",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "UVS locator: Physical Retailer / Organized Play",
+          "source_url": "https://locator.riftbound.uvsgames.com/stores/795f40f4-b6d7-4e65-9981-7a4fe5588800",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Sip & Game",
+      "address": "6428-A Fair Oaks Blvd",
+      "city": "Carmichael",
+      "state": "CA",
+      "zip": "95608",
+      "lat": null,
+      "lng": null,
+      "phone": "+19165454038",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "UVS locator: Physical and Online Retailer / Organized Play",
+          "source_url": "https://locator.riftbound.uvsgames.com/stores/3e92ea91-cbab-4913-9b5c-16a5e5b5b67c",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Dogpatch Games",
+      "address": "1095 Tennessee Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94107",
+      "lat": null,
+      "lng": null,
+      "phone": "(415) 610-8590",
+      "website": "https://www.dogpatch.games",
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Store event page: Radiance Pre-Rift Oct 20, 2026",
+          "source_url": "https://www.dogpatch.games/events1/riftbound-radiance-prerelease-2026-10-20",
+          "date": "2026-10-20"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Cardboard Games",
+      "address": "205 W. First Street, Suite 102",
+      "city": "Tustin",
+      "state": "CA",
+      "zip": "92780",
+      "lat": null,
+      "lng": null,
+      "phone": "(657) 758-2400",
+      "website": "https://cardboardgames.store",
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Store event pages: Radiance Pre-Rift Oct 17 and Oct 22; official UVS OP store",
+          "source_url": "https://cardboardgames.store/events/cbg-rft-20261022",
+          "date": "2026-10-22"
+        },
+        {
+          "summary": "Pre-Rift Oct 17",
+          "source_url": "https://cardboardgames.store/events/cbg-rft-20261017-1",
+          "date": "2026-10-17"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Kingslayer Games Oceanside",
+      "address": null,
+      "city": "Oceanside",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": "https://www.kingslayergames.com",
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Store page: Radiance Pre-Rift Sealed Oct 20, 2026 at Oceanside location (page lists only Fountain Valley HQ address)",
+          "source_url": "https://www.kingslayergames.com/10-20-26-oceanside-riftbound-radiance-pre-rift-sea.html",
+          "date": "2026-10-20"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Spellhold Games (Orange)",
+      "address": "1438 E Katella Ave",
+      "city": "Orange",
+      "state": "CA",
+      "zip": "92867",
+      "lat": null,
+      "lng": null,
+      "phone": "(657)-221-0854",
+      "website": "https://www.spellholdgames.com",
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Store page: Radiance Pre-Rift Oct 18, 2026 (event sold out)",
+          "source_url": "https://www.spellholdgames.com/catalog/events-weekly_events/riftbound_radiance_prerift_event_1018_1230pm/2342864",
+          "date": "2026-10-18"
+        }
+      ],
+      "confidence": "confirmed"
+    },
+    {
+      "name": "Out of the Box Goods",
+      "address": "261 E Colorado Blvd",
+      "city": "Pasadena",
+      "state": "CA",
+      "zip": "91101",
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "riftbound.org event listing: Radiance Pre-Rift Oct 20, 12/12 seats; Summoner Skirmishes Nov/Dec",
+          "source_url": "https://riftbound.org/events/117132003884711603/radiance-pre-rift",
+          "date": "2026-10-19"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "Laughing Dragon",
+      "address": null,
+      "city": "Sacramento",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Riot roadmap: Showdown Series: Laughing Dragon, Oct 23-24, 2026",
+          "source_url": "https://playriftbound.com/en-us/news/announcements/august-2026-roadmap/",
+          "date": "2026-08-03"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "Shuffle & Cut",
+      "address": null,
+      "city": "Brea",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Reddit user got Riftbound packs and $19.99 structure decks (old report)",
+          "source_url": "https://www.reddit.com/r/riftboundtcg/comments/1olanm2/availability_in_so_cal/",
+          "date": "2025-11-01"
+        }
+      ],
+      "confidence": "unconfirmed"
+    },
+    {
+      "name": "Bards & Cards - San Diego",
+      "address": "936 5th Ave",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92101",
+      "lat": null,
+      "lng": null,
+      "phone": "+1-619-937-2211",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "CardMap.app lists as carrying Riftbound (third-party directory)",
+          "source_url": "https://cardmap.app/games/riftbound/california/san-diego",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "Brute Force Games",
+      "address": "3755 Murphy Canyon Rd",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92123-4412",
+      "lat": null,
+      "lng": null,
+      "phone": "+1-619-230-5655",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "CardMap.app lists as carrying Riftbound (third-party directory)",
+          "source_url": "https://cardmap.app/games/riftbound/california/san-diego",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "Rare and Sleeveless",
+      "address": "5995 Mira Mesa Boulevard, suite f",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92121",
+      "lat": null,
+      "lng": null,
+      "phone": "+1-858-230-6506",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "CardMap.app lists as carrying Riftbound (third-party directory)",
+          "source_url": "https://cardmap.app/games/riftbound/california/san-diego",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "TC's Rockets",
+      "address": "5155 Waring Road",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92120",
+      "lat": null,
+      "lng": null,
+      "phone": "+1-619-713-0078",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "CardMap.app lists as carrying Riftbound (third-party directory)",
+          "source_url": "https://cardmap.app/games/riftbound/california/san-diego",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "Tito Rick's Garage",
+      "address": "2918 Imperial Ave",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92102",
+      "lat": null,
+      "lng": null,
+      "phone": "+1-619-871-6155",
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "CardMap.app lists as carrying Riftbound (third-party directory)",
+          "source_url": "https://cardmap.app/games/riftbound/california/san-diego",
+          "date": "2026-10-21"
+        }
+      ],
+      "confidence": "likely"
+    },
+    {
+      "name": "Micro Center",
+      "address": null,
+      "city": "Santa Clara area",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Named in r/SanJose thread as carrying Riftbound/events",
+          "source_url": "https://www.reddit.com/r/SanJose/comments/1uxnye2/any_stores_with_riftbound/",
+          "date": "2026-07-16"
+        }
+      ],
+      "confidence": "unconfirmed"
+    },
+    {
+      "name": "Cardart",
+      "address": null,
+      "city": "Sunnyvale",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Named in r/SanJose thread as carrying Riftbound/events",
+          "source_url": "https://www.reddit.com/r/SanJose/comments/1uxnye2/any_stores_with_riftbound/",
+          "date": "2026-07-16"
+        }
+      ],
+      "confidence": "unconfirmed"
+    },
+    {
+      "name": "Magitek",
+      "address": null,
+      "city": "Milpitas",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Named in r/SanJose thread as carrying Riftbound/events",
+          "source_url": "https://www.reddit.com/r/SanJose/comments/1uxnye2/any_stores_with_riftbound/",
+          "date": "2026-07-16"
+        }
+      ],
+      "confidence": "unconfirmed"
+    },
+    {
+      "name": "Game Corner",
+      "address": null,
+      "city": "San Jose",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Named in r/SanJose thread as carrying Riftbound/events",
+          "source_url": "https://www.reddit.com/r/SanJose/comments/1uxnye2/any_stores_with_riftbound/",
+          "date": "2026-07-16"
+        }
+      ],
+      "confidence": "unconfirmed"
+    },
+    {
+      "name": "Game Kastle Santa Clara",
+      "address": null,
+      "city": "Santa Clara",
+      "state": "CA",
+      "zip": null,
+      "lat": null,
+      "lng": null,
+      "phone": null,
+      "website": null,
+      "socials": [],
+      "riftbound_evidence": [
+        {
+          "summary": "Named in r/SanJose thread as carrying Riftbound/events",
+          "source_url": "https://www.reddit.com/r/SanJose/comments/1uxnye2/any_stores_with_riftbound/",
+          "date": "2026-07-16"
+        }
+      ],
+      "confidence": "unconfirmed"
+    }
   ]
 }
