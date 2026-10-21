@@ -1,22 +1,24 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Riftbound Heist – CA Riftbound TCG Store Finder</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"><link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 <style>body{font-family:system-ui,sans-serif;margin:0;background:#0f1220;color:#eee}header{padding:16px}h1{margin:0 0 6px;font-size:22px}
 #banner{display:none;background:#b00020;color:#fff;padding:10px 16px;font-weight:700;text-align:center}
 form{display:flex;gap:8px}input{padding:8px;font-size:16px;width:140px}button{padding:8px 14px;font-size:16px}
 #err{color:#ff8a80;margin-top:6px}main{display:flex;flex-wrap:wrap}#map{height:70vh;flex:1 1 500px}#list{flex:1 1 340px;max-height:70vh;overflow:auto;padding:8px}
 .card{background:#1b2035;border-radius:8px;padding:10px;margin:0 0 8px}.card h3{margin:0 0 4px;font-size:16px}.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:12px;background:#665c00}
-.tag.ok{background:#1b5e20}a{color:#8ab4f8}small{color:#aaa}footer{padding:12px 16px;color:#999;font-size:13px}</style></head><body>
+.tag.ok{background:#1b5e20}a{color:#8ab4f8}small{color:#aaa}.evbtn{display:inline-block;background:#7c4dff;color:#fff;font-weight:700;padding:8px 12px;border-radius:6px;margin:8px 0;text-decoration:none}.geo{color:#777;font-size:11px}footer{padding:12px 16px;color:#999;font-size:13px}</style></head><body>
 <div id="banner">⚠️ Sample data, not real stores</div>
 <header><h1>Riftbound Heist</h1><div>Find California game stores that likely carry Riftbound TCG (Riot Games).</div>
+<a class="evbtn" href="https://playriftbound.com/events" target="_blank" rel="noopener">📅 Find Riftbound events &amp; Pre-Rifts (official) →</a>
 <form id="f"><input id="zip" placeholder="CA ZIP code" maxlength="5" inputmode="numeric"><button>Search</button></form><div id="err"></div></header>
 <section id="newsbox" style="padding:0 16px"><h2 style="font-size:18px">Riftbound news</h2><ul id="news"></ul></section><main><div id="map"></div><div id="list"><small>Enter a California ZIP to see nearby stores.</small></div></main>
 <footer>Stock is <b>unverified/likely</b> unless a dated source confirms it. Always call the store first. Not affiliated with Riot Games. <span id="upd"></span></footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 const map=L.map('map').setView([36.7,-119.4],6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
-let zips={},stores=[],layer=L.layerGroup().addTo(map);
+let zips={},stores=[],layer=L.layerGroup().addTo(map),cluster=(L.markerClusterGroup?L.markerClusterGroup({chunkedLoading:true}):L.layerGroup()).addTo(map);const LIST_CAP=50;
+const CONF={confirmed:'Listed retailer',likely:'Likely retailer',unconfirmed:'Unconfirmed retailer'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'#';
 const mi=(a,b,c,d)=>{const r=x=>x*Math.PI/180,R=3958.8,dl=r(c-a),dn=r(d-b),h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
@@ -34,22 +36,23 @@ function card(s){const ev=s.riftbound_evidence||[];const latest=ev.slice().sort(
  const loc=s.loc.kind==='approx'?' <span class="tag" style="background:#444">approximate location (ZIP centroid)</span>':s.loc.kind==='pending'?' <span class="tag" style="background:#444">location pending</span>':'';
  const dist=s.d!=null?` · ${s.d.toFixed(1)} mi${s.loc.kind==='approx'?' (approx.)':''}`:'';
  const addr=[s.address,s.city,s.zip].filter(Boolean).join(', ');
- const links=[s.website?`<a href="${esc(safeUrl(s.website))}" target="_blank" rel="noopener">Website</a>`:'',s.phone?`<a href="tel:${esc(s.phone)}">${esc(s.phone)}</a>`:''].filter(Boolean).join(' · ');
+ const links=['<a href="https://playriftbound.com/events" target="_blank" rel="noopener">Events</a>',s.locator_url?`<a href="${esc(safeUrl(s.locator_url))}" target="_blank" rel="noopener">Store locator page</a>`:'',s.website?`<a href="${esc(safeUrl(s.website))}" target="_blank" rel="noopener">Website</a>`:'',s.phone?`<a href="tel:${esc(s.phone)}">${esc(s.phone)}</a>`:''].filter(Boolean).join(' · ');
  const src=ev.map(x=>`<li>${esc(x.summary)} — <a href="${esc(safeUrl(x.source_url))}" target="_blank" rel="noopener">source</a> <small>(${esc(x.date||'undated')})</small></li>`).join('')||'<li>No sources</li>';
- return `<h3>${esc(s.name)}</h3><small>${esc(addr)}${dist}</small>${loc}<br>${stockTag(s)} <span class="tag" style="background:#333">Carries Riftbound: ${esc(s.confidence||'unknown')}</span>
+ return `<h3>${esc(s.name)}</h3><small>${esc(addr)}${dist}</small>${loc}<br>${stockTag(s)} <span class="tag" style="background:#333">${esc(CONF[s.confidence]||'Retailer status unknown')}</span>${s.geocode_source?` <span class="geo">geo: ${esc(s.geocode_source)}</span>`:''}
  ${links?'<div>'+links+'</div>':''}<div><b>Last sighting:</b> ${latest?esc(latest.date||'undated')+': '+esc(latest.summary):'None recorded'}</div>
  <div><b>Evidence, events &amp; sources:</b><ul style="margin:2px 0">${src}</ul></div>`}
 document.getElementById('f').onsubmit=e=>{e.preventDefault();const z=document.getElementById('zip').value.trim(),err=document.getElementById('err');err.textContent='';
  if(!/^\d{5}$/.test(z)||+z<90000||+z>96199){err.textContent='Please enter a California ZIP (90000–96199).';return}
  const c=zips[z];if(!c){err.textContent='ZIP not found in our California ZIP list.';return}
- layer.clearLayers();L.circleMarker(c,{radius:7,color:'#f44'}).addTo(layer).bindPopup('ZIP '+z);
+ layer.clearLayers();cluster.clearLayers();L.circleMarker(c,{radius:7,color:'#f44'}).addTo(layer).bindPopup('ZIP '+z);
  const all=stores.map(s=>{const loc=locate(s);return{...s,loc,d:loc.pos?mi(c[0],c[1],loc.pos[0],loc.pos[1]):null}});
  const pinned=all.filter(s=>s.loc.pos).sort((a,b)=>a.d-b.d),pending=all.filter(s=>!s.loc.pos);
  const el=document.getElementById('list');el.innerHTML=all.length?'':'<small>No stores in the dataset yet.</small>';const pts=[c];
- pinned.forEach(s=>{pts.push(s.loc.pos);const html=card(s);
+ const markers=[];pinned.forEach((s,i)=>{if(i<5)pts.push(s.loc.pos);const html=card(s);
   const m=s.loc.kind==='approx'?L.circleMarker(s.loc.pos,{radius:9,dashArray:'4',color:'#ffb300'}):L.marker(s.loc.pos);
-  m.addTo(layer).bindPopup((s.loc.kind==='approx'?'<b>Approximate location</b><br>':'')+html);const d=document.createElement('div');d.className='card';d.innerHTML=html;el.appendChild(d)});
+  m.bindPopup((s.loc.kind==='approx'?'<b>Approximate location</b><br>':'')+html);markers.push(m);if(i<LIST_CAP){const d=document.createElement('div');d.className='card';d.innerHTML=html;el.appendChild(d)}});cluster.addLayers(markers);
+ if(pinned.length>LIST_CAP){const n=document.createElement('small');n.textContent=`Showing the ${LIST_CAP} nearest of ${pinned.length} mapped stores. Zoom the map to see the rest.`;el.appendChild(n)}
  if(pending.length){const h=document.createElement('h4');h.textContent='Location pending (not on map)';el.appendChild(h);
   pending.forEach(s=>{const d=document.createElement('div');d.className='card';d.innerHTML=card(s);el.appendChild(d)})}
- map.fitBounds(L.latLngBounds(pts.slice(0,6)).pad(0.2));};
+ map.fitBounds(L.latLngBounds(pts).pad(0.2));};
 </script></body></html>
