@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
     const c = await L.getDb();
     if (req.method === 'POST') {
       const b = await L.body(req);
-      const name = L.cleanName(b.name) || 'Rift Night';
+      const name = L.cleanName(b.name) || 'Our group';
       const id = L.newId(16), hostToken = L.newId(24), now = Date.now();
       await L.prune(c);
       await c.execute({ sql: "INSERT INTO rn_groups (id, name, host_hash, rift_nights, created_at, updated_at) VALUES (?, ?, ?, '[]', ?, ?)", args: [id, name, L.hash(hostToken), now, now] });

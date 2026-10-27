@@ -84,7 +84,7 @@ async function openGroup(id) {
   show('group');
   try { await load(); } catch (e) {
     if (e.status === 404) { show('missing'); return; }
-    $('gName').textContent = 'Rift Night'; $('friends').textContent = e.message;
+    $('gName').textContent = 'Anyone Free?'; $('friends').textContent = e.message;
   }
 }
 async function load() {
@@ -96,11 +96,11 @@ const meObj = () => { if (!S.group || !S.me) return null; const lo = S.me.toLowe
 function myMember() { let m = meObj(); if (!m) { m = { name: S.me, weekly: {}, overrides: {} }; S.group.members.push(m); } return m; }
 
 function render() {
-  const g = S.group; document.title = g.name + ' – Rift Night';
+  const g = S.group; document.title = g.name + ' – Anyone Free?';
   $('gName').textContent = g.name; $('hostTag').hidden = !S.host;
   const up = (g.riftNights || []).filter((k) => k >= today());
-  $('nextRift').hidden = !up.length;
-  if (up.length) $('nextRift').innerHTML = `★ Rift Night: ${up.map(nice).map(esc).join(', ')}`;
+  $('nextPlan').hidden = !up.length;
+  if (up.length) $('nextPlan').innerHTML = `★ Planned: ${up.map(nice).map(esc).join(', ')}`;
   $('who').hidden = !!S.me;
   $('whoList').innerHTML = g.members.map((m) => `<button class="btn" data-name="${esc(m.name)}">${esc(m.name)}</button>`).join('');
   $('friends').textContent = g.members.length ? `${g.members.length} friend${g.members.length > 1 ? 's' : ''}: ${g.members.map((m) => m.name).join(', ')}` : 'No one has added a schedule yet. Share the link!';
@@ -123,20 +123,20 @@ function renderGroupCal() {
   $('gGrid').innerHTML = monthCells(f).map((k) => {
     if (!k) return '<span class="cell empty"></span>';
     const c = counts(k), r = total ? c.free.length / total : 0, past = k < t;
-    const bg = c.free.length ? `background:hsl(186 35% ${Math.round(88 - r * 52)}%)` : '';
-    const cls = ['cell', past && 'past', k === t && 'today', k === S.sel && 'sel', rn.has(k) && 'riftday', r > 0.5 && 'dark'].filter(Boolean).join(' ');
-    const lbl = `${nice(k)}: ${c.free.length} free, ${c.maybe.length} maybe${rn.has(k) ? ', Rift Night' : ''}`;
+    const bg = c.free.length ? `background:hsl(170 45% ${Math.round(88 - r * 54)}%)` : '';
+    const cls = ['cell', past && 'past', k === t && 'today', k === S.sel && 'sel', rn.has(k) && 'planday', r > 0.5 && 'dark'].filter(Boolean).join(' ');
+    const lbl = `${nice(k)}: ${c.free.length} free, ${c.maybe.length} maybe${rn.has(k) ? ', planned' : ''}`;
     return `<button class="${cls}" style="${bg}" data-gday="${k}" aria-label="${esc(lbl)}">${+k.slice(8)}${total ? `<small>${c.free.length}${c.maybe.length ? '+' + c.maybe.length : ''}</small>` : ''}</button>`;
   }).join('');
 }
 function renderDay() {
   const el = $('day'), k = S.sel; el.hidden = !k; if (!k) return;
-  const c = counts(k), isRift = (S.group.riftNights || []).includes(k);
+  const c = counts(k), isPlan = (S.group.riftNights || []).includes(k);
   const sec = (title, names, cls) => names.length ? `<h3>${title} (${names.length})</h3><div class="names ${cls}">${names.map((n) => `<span>${esc(n)}</span>`).join('')}</div>` : '';
-  el.innerHTML = `<div class="mehead"><h2>${esc(nice(k))}${isRift ? ' · ★ Rift Night' : ''}</h2><button class="link" id="closeDay">close</button></div><div class="daylist">
+  el.innerHTML = `<div class="mehead"><h2>${esc(nice(k))}${isPlan ? ' · ★ Planned' : ''}</h2><button class="link" id="closeDay">close</button></div><div class="daylist">
    ${sec('Free', c.free, 'free')}${sec('Maybe', c.maybe, 'maybe')}${sec('Busy', c.busy, '')}${sec('No info', c.unknown, '')}
    ${!S.group.members.length ? '<p class="hint">No schedules yet.</p>' : ''}</div>
-   ${S.host && k >= today() ? `<div class="row"><button class="btn ${isRift ? '' : 'primary'}" id="riftBtn" style="flex:1">${isRift ? 'Remove Rift Night' : '★ Make this Rift Night'}</button></div>` : ''}`;
+   ${S.host && k >= today() ? `<div class="row"><button class="btn ${isPlan ? '' : 'primary'}" id="planBtn" style="flex:1">${isPlan ? 'Remove plan' : '★ Plan it here'}</button></div>` : ''}`;
 }
 function renderBest() {
   const list = [], d = new Date();
@@ -201,10 +201,10 @@ document.addEventListener('click', async (e) => {
   if (b.dataset.mday) { const m = myMember(), k = b.dataset.mday, cur = m.overrides[k] ? m.overrides[k].s : null; const nx = CYCLE[(CYCLE.indexOf(cur) + 1) % CYCLE.length];
     if (nx) m.overrides[k] = { s: nx }; else delete m.overrides[k]; S.ovSel = k;
     renderMine(); renderGroupCal(); renderBest(); scheduleSave(); return; }
-  if (b.id === 'riftBtn') { const on = !(S.group.riftNights || []).includes(S.sel);
-    try { const r = await api('/api/riftnight?id=' + encodeURIComponent(S.gid), { method: 'POST', body: { date: S.sel, on, hostToken: S.host } }); S.group.riftNights = r.riftNights; render(); toast(on ? '★ Rift Night set!' : 'Rift Night removed'); } catch (err) { toast(err.message); } return; }
+  if (b.id === 'planBtn') { const on = !(S.group.riftNights || []).includes(S.sel);
+    try { const r = await api('/api/riftnight?id=' + encodeURIComponent(S.gid), { method: 'POST', body: { date: S.sel, on, hostToken: S.host } }); S.group.riftNights = r.riftNights; render(); toast(on ? '★ Planned!' : 'Plan removed'); } catch (err) { toast(err.message); } return; }
   if (b.id === 'shareBtn') { const url = location.origin + '/g/' + S.gid;
-    try { if (navigator.share && matchMedia('(pointer:coarse)').matches) await navigator.share({ title: S.group ? S.group.name : 'Rift Night', text: 'Add your schedule for Rift Night', url }); else { await navigator.clipboard.writeText(url); toast('Link copied'); } } catch { prompt('Copy this link:', url); } return; }
+    try { if (navigator.share && matchMedia('(pointer:coarse)').matches) await navigator.share({ title: S.group ? S.group.name : 'Anyone Free?', text: 'Anyone free? Add your days off so we can pick a night.', url }); else { await navigator.clipboard.writeText(url); toast('Link copied'); } } catch { prompt('Copy this link:', url); } return; }
   if (b.id === 'changeMe') { S.me = null; LS.del('rn:name:' + S.gid); render(); $('who').scrollIntoView({ block: 'center' }); return; }
   if (b.id === 'removeMe') { if (!confirm(`Remove ${S.me}'s schedule from this group?`)) return;
     try { await api('/api/member?id=' + encodeURIComponent(S.gid), { method: 'DELETE', body: { name: S.me } }); LS.del('rn:name:' + S.gid); S.me = null; await load(); toast('Removed'); } catch (err) { toast(err.message); } return; }

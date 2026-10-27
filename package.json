@@ -1,5 +1,5 @@
 {
-  "name": "rift-night",
+  "name": "anyone-free",
   "private": true,
   "engines": { "node": ">=20" },
   "dependencies": { "@libsql/client": "^0.15.0" }

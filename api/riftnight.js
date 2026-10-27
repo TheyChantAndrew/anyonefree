@@ -1,4 +1,4 @@
-// POST ?id= {date, on, hostToken} -> host marks/unmarks a date as Rift Night
+// POST ?id= {date, on, hostToken} -> host marks/unmarks a date as the planned event (route name kept for compatibility)
 const L = require('./_lib');
 module.exports = async (req, res) => {
   if (!L.connected()) return L.notConnected(res);
