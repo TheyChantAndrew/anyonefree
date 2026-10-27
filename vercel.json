@@ -1,1 +1,6 @@
-{"outputDirectory":"public","buildCommand":null,"framework":null}
+{
+  "outputDirectory": "public",
+  "buildCommand": null,
+  "framework": null,
+  "rewrites": [{ "source": "/g/:id", "destination": "/index.html" }]
+}
