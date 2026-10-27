@@ -1,5 +1,5 @@
 // Shared helpers: Turso (libSQL) via @libsql/client.
-// Reads ONLY RIFT_TURSO_DATABASE_URL and RIFT_TURSO_AUTH_TOKEN (set on the riftbound-heist
+// Reads ONLY RIFT_TURSO_DATABASE_URL and RIFT_TURSO_AUTH_TOKEN (set on the anyonefree
 // Vercel project). Deliberately never reads plain TURSO_* vars.
 const crypto = require('crypto');
 const DB_URL = process.env.RIFT_TURSO_DATABASE_URL;

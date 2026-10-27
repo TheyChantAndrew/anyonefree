@@ -12,4 +12,4 @@ Live: https://anyonefree.vercel.app
 - `public/` static app (`index.html`, `app.js`, `app.css`, `favicon.svg`, `logo.svg`, `og.png`); `/g/:id` rewrites to `index.html`.
 - `api/health.js`, `api/group.js` (create/get/delete), `api/member.js` (upsert/remove schedule), `api/riftnight.js` (host only: toggle a planned date).
 
-Some internal names (`rift_nights` column, `/api/riftnight` route, `RIFT_TURSO_*` env vars, `rn:*` localStorage keys, the repo name) predate the rename and are kept so existing groups and links keep working. An earlier store-finder app lives in git history at tag `store-finder-v1`.
+Some internal names (`rift_nights` column, `/api/riftnight` route, `RIFT_TURSO_*` env vars, `rn:*` localStorage keys) predate the rename and are kept so existing groups and links keep working. An earlier store-finder app lives in git history at tag `store-finder-v1`.

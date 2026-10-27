@@ -203,7 +203,7 @@ document.addEventListener('click', async (e) => {
     renderMine(); renderGroupCal(); renderBest(); scheduleSave(); return; }
   if (b.id === 'planBtn') { const on = !(S.group.riftNights || []).includes(S.sel);
     try { const r = await api('/api/riftnight?id=' + encodeURIComponent(S.gid), { method: 'POST', body: { date: S.sel, on, hostToken: S.host } }); S.group.riftNights = r.riftNights; render(); toast(on ? '★ Planned!' : 'Plan removed'); } catch (err) { toast(err.message); } return; }
-  if (b.id === 'shareBtn') { const url = location.origin + '/g/' + S.gid;
+  if (b.id === 'shareBtn') { const url = (location.hostname.endsWith('.vercel.app') ? 'https://anyonefree.vercel.app' : location.origin) + '/g/' + S.gid;
     try { if (navigator.share && matchMedia('(pointer:coarse)').matches) await navigator.share({ title: S.group ? S.group.name : 'Anyone Free?', text: 'Anyone free? Add your days off so we can pick a night.', url }); else { await navigator.clipboard.writeText(url); toast('Link copied'); } } catch { prompt('Copy this link:', url); } return; }
   if (b.id === 'changeMe') { S.me = null; LS.del('rn:name:' + S.gid); render(); $('who').scrollIntoView({ block: 'center' }); return; }
   if (b.id === 'removeMe') { if (!confirm(`Remove ${S.me}'s schedule from this group?`)) return;
