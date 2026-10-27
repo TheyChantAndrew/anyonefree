@@ -1,21 +1,61 @@
-// Shared helpers: Upstash Redis over REST (no npm deps). Works as soon as the
-// Vercel Marketplace Upstash integration adds KV_REST_API_URL/KV_REST_API_TOKEN
-// (or UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN) to this project.
+// Shared helpers: Turso (libSQL) via @libsql/client.
+// Reads ONLY RIFT_TURSO_DATABASE_URL and RIFT_TURSO_AUTH_TOKEN (set on the riftbound-heist
+// Vercel project). Deliberately never reads plain TURSO_* vars.
 const crypto = require('crypto');
-const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-const TTL = 60 * 60 * 24 * 400; // groups expire ~13 months after last write
+const DB_URL = process.env.RIFT_TURSO_DATABASE_URL;
+const DB_TOKEN = process.env.RIFT_TURSO_AUTH_TOKEN;
+const TTL_MS = 1000 * 60 * 60 * 24 * 400; // groups expire ~13 months after last write
 
-const connected = () => !!(URL_ && TOKEN);
-async function pipeline(cmds) {
-  const r = await fetch(URL_.replace(/\/$/, '') + '/pipeline', {
-    method: 'POST', headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify(cmds),
-  });
-  if (!r.ok) throw new Error('storage error ' + r.status);
-  const out = await r.json();
-  for (const x of out) if (x.error) throw new Error('storage error: ' + x.error);
-  return out.map((x) => x.result);
+// Both vars are required ("storage not connected" until they exist). A local file: URL is
+// allowed for development only, where any non-empty token value satisfies the check.
+const connected = () => !!(DB_URL && DB_TOKEN);
+
+const SCHEMA = [
+  `CREATE TABLE IF NOT EXISTS rn_groups (
+    id          TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    host_hash   TEXT NOT NULL,
+    rift_nights TEXT NOT NULL DEFAULT '[]',
+    created_at  INTEGER NOT NULL,
+    updated_at  INTEGER NOT NULL
+  )`,
+  `CREATE INDEX IF NOT EXISTS rn_groups_updated_at ON rn_groups(updated_at)`,
+  `CREATE TABLE IF NOT EXISTS rn_members (
+    group_id   TEXT NOT NULL,
+    name_key   TEXT NOT NULL,
+    data       TEXT NOT NULL,
+    updated_at INTEGER NOT NULL,
+    PRIMARY KEY (group_id, name_key)
+  )`,
+];
+let client = null, ready = null;
+function db() {
+  if (!client) {
+    const { createClient } = require('@libsql/client');
+    const opts = { url: DB_URL };
+    if (!DB_URL.startsWith('file:')) opts.authToken = DB_TOKEN;
+    client = createClient(opts);
+  }
+  return client;
+}
+// Lazily create tables on first use (once per warm instance).
+async function getDb() {
+  const c = db();
+  if (!ready) ready = c.batch(SCHEMA, 'write').catch((e) => { ready = null; throw e; });
+  await ready;
+  return c;
+}
+let lastPrune = 0;
+// Delete groups (and their members) idle longer than TTL. Runs at most every 10 min per instance.
+async function prune(c, force) {
+  const now = Date.now();
+  if (!force && now - lastPrune < 10 * 60 * 1000) return;
+  lastPrune = now;
+  const cutoff = now - TTL_MS;
+  await c.batch([
+    { sql: 'DELETE FROM rn_members WHERE group_id IN (SELECT id FROM rn_groups WHERE updated_at < ?)', args: [cutoff] },
+    { sql: 'DELETE FROM rn_groups WHERE updated_at < ?', args: [cutoff] },
+  ], 'write');
 }
 const send = (res, code, body) => { res.statusCode = code; res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store'); res.end(JSON.stringify(body)); };
 const notConnected = (res) => send(res, 503, { error: 'storage_not_connected', message: 'Storage not connected yet.' });
@@ -29,12 +69,26 @@ async function body(req) {
   if (typeof req.body === 'string') { try { return JSON.parse(req.body); } catch { return {}; } }
   return {};
 }
-async function loadGroup(id) {
-  const [g] = await pipeline([['GET', 'g:' + id]]);
-  return g ? JSON.parse(g) : null;
+// Load a group; expired groups are pruned and treated as missing.
+async function loadGroup(c, id) {
+  await prune(c);
+  const r = await c.execute({ sql: 'SELECT id, name, host_hash, rift_nights, created_at, updated_at FROM rn_groups WHERE id = ?', args: [id] });
+  const row = r.rows[0];
+  if (!row) return null;
+  if (Number(row.updated_at) < Date.now() - TTL_MS) {
+    await deleteGroup(c, id);
+    return null;
+  }
+  let riftNights = [];
+  try { riftNights = JSON.parse(row.rift_nights) || []; } catch {}
+  return { id: row.id, name: row.name, hostHash: row.host_hash, riftNights, createdAt: Number(row.created_at) };
 }
+const deleteGroup = (c, id) => c.batch([
+  { sql: 'DELETE FROM rn_members WHERE group_id = ?', args: [id] },
+  { sql: 'DELETE FROM rn_groups WHERE id = ?', args: [id] },
+], 'write');
+const touch = (id) => ({ sql: 'UPDATE rn_groups SET updated_at = ? WHERE id = ?', args: [Date.now(), id] });
 const isHost = (g, token) => !!token && g.hostHash === hash(token);
-const touch = (id) => [['EXPIRE', 'g:' + id, TTL], ['EXPIRE', 'g:' + id + ':m', TTL]];
 
 // Validate a schedule entry {s:'work'|'off'|'maybe', start?, end?} (minutes after midnight)
 function cleanDay(d) {
@@ -53,4 +107,4 @@ function cleanMember(m) {
   for (const k of keys) { const d = cleanDay(m.overrides[k]); if (d) overrides[k] = d; }
   return { name, weekly, overrides, updatedAt: Date.now() };
 }
-module.exports = { connected, pipeline, send, notConnected, newId, hash, validId, validDate, cleanName, body, loadGroup, isHost, touch, cleanMember, TTL };
+module.exports = { connected, getDb, prune, send, notConnected, newId, hash, validId, validDate, cleanName, body, loadGroup, deleteGroup, isHost, touch, cleanMember, TTL_MS };

@@ -1,0 +1,6 @@
+{
+  "name": "rift-night",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "dependencies": { "@libsql/client": "^0.15.0" }
+}
