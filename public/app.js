@@ -123,10 +123,10 @@ function renderGroupCal() {
   $('gGrid').innerHTML = monthCells(f).map((k) => {
     if (!k) return '<span class="cell empty"></span>';
     const c = counts(k), r = total ? c.free.length / total : 0, past = k < t;
-    const bg = c.free.length ? `background:hsl(170 45% ${Math.round(88 - r * 54)}%)` : '';
-    const cls = ['cell', past && 'past', k === t && 'today', k === S.sel && 'sel', rn.has(k) && 'planday', r > 0.5 && 'dark'].filter(Boolean).join(' ');
+    const hv = c.free.length ? (r > 0.75 ? 'h4' : r > 0.5 ? 'h3' : r > 0.25 ? 'h2' : 'h1') : '';
+    const cls = ['cell', past && 'past', k === t && 'today', k === S.sel && 'sel', rn.has(k) && 'planday', !past && hv].filter(Boolean).join(' ');
     const lbl = `${nice(k)}: ${c.free.length} free, ${c.maybe.length} maybe${rn.has(k) ? ', planned' : ''}`;
-    return `<button class="${cls}" style="${bg}" data-gday="${k}" aria-label="${esc(lbl)}">${+k.slice(8)}${total ? `<small>${c.free.length}${c.maybe.length ? '+' + c.maybe.length : ''}</small>` : ''}</button>`;
+    return `<button class="${cls}" data-gday="${k}" aria-label="${esc(lbl)}">${+k.slice(8)}${total ? `<small>${c.free.length}${c.maybe.length ? '+' + c.maybe.length : ''}</small>` : ''}</button>`;
   }).join('');
 }
 function renderDay() {
@@ -189,6 +189,7 @@ function applyShift(target, input) {
 // ---------- events ----------
 document.addEventListener('click', async (e) => {
   const b = e.target.closest('button,a'); if (!b) return;
+  if (b.classList.contains('themeBtn')) { setTheme(effTheme() === 'dark' ? 'light' : 'dark'); return; }
   if (b.dataset.name) { setMe(b.dataset.name); return; }
   if (b.dataset.nav) { const [w, d] = b.dataset.nav.split(':'); const k = w === 'g' ? 'gMonth' : 'mMonth'; S[k] = new Date(S[k].getFullYear(), S[k].getMonth() + +d, 1); render(); return; }
   if (b.dataset.gday) { S.sel = S.sel === b.dataset.gday ? null : b.dataset.gday; renderGroupCal(); renderDay(); if (S.sel && innerWidth < 900) $('day').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
@@ -226,3 +227,18 @@ setInterval(() => { if (S.gid && !$('group').hidden && document.visibilityState 
 setTab('group');
 fetch('/api/health').then((r) => r.json()).then((j) => setStorage(!!j.storage)).catch(() => setStorage(false));
 route();
+
+// ---------- theme (light/dark; saved in af:theme, default follows the OS) ----------
+const darkMQ = matchMedia('(prefers-color-scheme: dark)');
+function effTheme() { const t = LS.get('af:theme'); return t === 'light' || t === 'dark' ? t : (darkMQ.matches ? 'dark' : 'light'); }
+function applyTheme() {
+  const t = LS.get('af:theme'), e = effTheme(), d = document.documentElement;
+  if (t === 'light' || t === 'dark') d.dataset.theme = t; else delete d.dataset.theme;
+  d.dataset.eff = e;
+  const c = e === 'dark' ? '#0b1220' : '#f5f7fb';
+  if (t) { $('tcLight').content = c; $('tcDark').content = c; } else { $('tcLight').content = '#f5f7fb'; $('tcDark').content = '#0b1220'; }
+  document.querySelectorAll('.themeBtn').forEach((b) => { b.setAttribute('aria-pressed', String(e === 'dark')); b.title = e === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'; });
+}
+function setTheme(t) { LS.set('af:theme', t); applyTheme(); }
+darkMQ.addEventListener('change', applyTheme);
+applyTheme();
